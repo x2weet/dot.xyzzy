@@ -17,7 +17,8 @@
 (global-set-key #\C-/ 'undo)
 (global-set-key #\C-u 'set-mark-command)
 (global-set-key #\C-q 'copy-region-to-clipboard)
-(global-set-key #\C-r 'copy-region-to-clipboard)
+(global-set-key #\C-r 'ed::isearch-backward)
+(global-set-key #\C-w 'ed::isearch-forward)
 (global-set-key #\C-w 'kill-region-to-clipboard)
 (global-set-key #\C-y 'paste-from-clipboard)
 (global-set-key #\C-k 'emacs-kill-line)
@@ -62,9 +63,11 @@
 ;;;
 ;;; javascript-mode
 ;;;
-;;(load-library "javascript-mode")
-;;(push '("\\.js$" . javascript-mode) *auto-mode-alist*)
-
+(load-library "javascript-mode")
+(push '("\\.js$" . javascript-mode) *auto-mode-alist*)
+(setq *javascript-indent-tabs-mode* nil)
+(define-key *javascript-mode-map* #\C-\/ 'undo)
+(define-key *javascript-mode-map* #\TAB 'javascript-indent-line)
 
 ;;;
 ;;; kill-line-to-clipboard ÇíËã`Ç∑ÇÈÅB
@@ -170,3 +173,4 @@
                     (return-from emacs-kill-line nil))
                    ((or (looking-at "[ \\t]*$")
                         (and *kill-whole-line* (bolp))) 1))))
+
