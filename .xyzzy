@@ -1,0 +1,172 @@
+;;; -*- mode: emacs-lisp -*-
+;;;
+;;; .xyzzy
+;;;
+;;;   Author: Ryota Wada
+;;;     Date: 2013-05-04T03:50:05+09:00.
+;;;
+;;; ------------------------------------------------------------
+
+
+
+;;;
+;;; key bindings
+;;;
+(global-set-key #\C-t 'previous-page)
+(global-set-key #\C-o 'other-window)
+(global-set-key #\C-/ 'undo)
+(global-set-key #\C-u 'set-mark-command)
+(global-set-key #\C-q 'copy-region-to-clipboard)
+(global-set-key #\C-r 'copy-region-to-clipboard)
+(global-set-key #\C-w 'kill-region-to-clipboard)
+(global-set-key #\C-y 'paste-from-clipboard)
+(global-set-key #\C-k 'emacs-kill-line)
+(global-set-key #\C-l 'recenter)
+(global-set-key #\C-\\ 'universal-argument)
+(global-set-key '(#\C-x #\h) 'mark-whole-buffer)
+(global-set-key '(#\C-x #\C-i) 'indent-region)
+(global-set-key '(#\C-x #\C-a) 'beginning-of-buffer)
+(global-set-key '(#\C-x #\C-n) 'end-of-buffer)
+(global-set-key '(#\C-x #\C-0) 'delete-window)
+(global-set-key '(#\C-x #\C-1) 'delete-other-windows)
+(global-set-key '(#\C-x #\C-2) 'split-window)
+(global-set-key '(#\C-x #\C-3) 'split-window-vertically)
+;; (global-set-key #\C-k 'kill-line)
+(global-set-key '(#\C-x #\C-k) 'delete-current-buffer-force);; kill-buffer
+(global-set-key '(#\C-x #\C-h #\C-k) 'describe-key)
+(global-set-key '(#\C-x #\C-h #\C-f) 'describe-function)
+(global-set-key '(#\C-x #\C-h #\C-b) 'describe-bindings)
+(global-set-key '(#\C-x #\C-h #\C-v) 'describe-variable)
+(define-key esc-map #\, 'next-buffer)
+(define-key esc-map #\. 'previous-buffer)
+(define-key esc-map #\j 'backward-sexp)
+(define-key esc-map #\l 'forward-sexp)
+(define-key esc-map #\i 'backward-up-list)
+(define-key esc-map #\k 'down-list)
+(define-key esc-map #\m 'mark-sexp)
+(define-key esc-map #\% 'replace-string)
+(define-key esc-map #\C-% 'query-replace-regexp)
+
+;;;
+;;; mode-line
+;;;
+(setq-default mode-line-format
+              ;; "[%i] [%*] [%k:%l]   %b  %P     [%M] %f")"
+              "%k:%l%*      %b  %P     (%M)")
+
+;;;
+;;; indent
+;;;
+(setq *lisp-indent-tabs-mode* nil)
+
+;;;
+;;; javascript-mode
+;;;
+;;(load-library "javascript-mode")
+;;(push '("\\.js$" . javascript-mode) *auto-mode-alist*)
+
+
+;;;
+;;; kill-line-to-clipboard を定義する。
+;;;
+;;;   http://d.hatena.ne.jp/kkobayashi_a/20060705/p1
+(defun kill-line-to-clipboard (&optional lines)
+  (interactive "*p")
+  (kill-line lines)
+  (copy-to-clipboard (apply #'concat (car ed::*kill-ring*))))
+
+;;;
+;;; html+-mode
+;;;
+;;;   http://kusu.googlecode.com/svn-history/r97/settings/xyzzy/html+-mode.l
+(export 'ed::html+-mode "ed")
+(autoload 'html+-mode "html+-mode" t)
+(pushnew '("\\.s?html?$" . html+-mode) *auto-mode-alist* :test 'equal)
+
+;;(setq ed::*html+-guess-list*
+;;  ; めちゃめちゃてきとー且つ自己充足的です
+;;  ; DTDに完全に対応させたければここをそれなりに
+;;  ; 【Sat, 12 May 2001 19:08:55 +0900】
+;;  ; 確かここを連想配列にしなかったのはいろいろと後の事を考えてだったような・・・
+;;  ; 【Mon, 06 Aug 2001 00:17:00 +0900】
+;;  ; 他の部分はhtml-kwd対応したけどここは置き去り、DTDから生成しなきゃ無理です
+;;  '((""
+;;     . ("html"))
+;;    ("html"
+;;     . ("head" "body"))
+;;    ("head"
+;;     . ("title"))
+;;    ("body"
+;;     . ("blockquote" "p"  "dl" "ul" "ol"))
+;;    ("blockquote"
+;;     . ("blockquote" "p"))
+;;    ("table"
+;;     . ("tr"))
+;;    ("tr"
+;;     . ("th" "td"))
+;;    ("ruby"
+;;     . ("rb" "rt"))
+;;    ("dl"
+;;     . ("dt" "dd"))
+;;    ("ul"
+;;     . ("li"))
+;;    ("ol"
+;;     . ("li")))
+;;      "html+-mode: 状況依存したタグの候補")
+
+
+;; (define-key ed::*html+-mode-map* #\C-l 'html+-close-match-tag)
+
+
+;;;
+;;; bash-mode
+;;;
+;;;   http://www2.ocn.ne.jp/~cheerful/script/xyzzy/mode/bash-mode.html
+(export 'ed::bash-mode "ed")
+(autoload 'bash-mode "bash-mode" t)
+(pushnew '("\\.sh$" . bash-mode) *auto-mode-alist* :test 'equal)
+
+;;;
+;;; C and C++
+;;;
+;; 「インデントのレベル」は、共通設定->「表示」->「タブの幅」より大きくすること。
+(setq *c-indent-tabs-mode* nil)
+(setq c-indent-level 4)
+(setq *c++-indent-tabs-mode* nil)
+(setq c++-indent-level 4)
+
+;;;
+;;; region-highlight
+;;;
+(load-library "region-hilight.l")
+
+;;;
+;;; isearch
+;;;
+(require 'isearch)
+
+;;;
+;;; そのままバッファ消去
+;;;
+;;; http://www2.ocn.ne.jp/~cheerful/script/xyzzy/customize/siteinit.html
+(defun delete-current-buffer-force ()
+  (interactive)
+  "カレントバッファーを有無をいわさず消去"
+  (if (selected-buffer)
+      (delete-buffer (selected-buffer))
+    (message "失敗してもうた")
+    ))
+
+;;;
+;;; C-k の行頭操作(行末処理)を emacsライクに 改行も含める。
+;;;
+;;; http://www2.ocn.ne.jp/~cheerful/script/xyzzy/customize/siteinit.html
+(defvar *kill-whole-line* t)
+(defun emacs-kill-line (&optional lines)
+  (interactive "*p")
+  (kill-line-to-clipboard (cond (lines lines)
+                   ((eobp)
+                    (message "end-of-buffer")
+                    (return-from emacs-kill-line nil))
+                   ((or (looking-at "[ \\t]*$")
+                        (and *kill-whole-line* (bolp))) 1))))
